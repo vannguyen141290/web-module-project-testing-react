@@ -6,21 +6,65 @@ import Show from './../Show';
 
 const testShow = {
     //add in approprate test data structure here.
+    name: 'Stranger Things',
+    summary: 'this is summary',
+    seasons: [
+        {
+            id: 1,
+            name: 'Season 1',
+            episodes: []
+        },
+        {
+            id: 2,
+            name: 'Season 2',
+            episodes: []
+        },
+        {
+            id: 3,
+            name: 'Season 3',
+            episodes: []
+        },
+    ],
+}
+
+const handleSelect = () => {
+    return "handleChange is called !!! "
 }
 
 test('renders testShow and no selected Season without errors', ()=>{
+    render(<Show show={testShow} selectedSeason='none'/>)
 });
 
 test('renders Loading component when prop show is null', () => {
+    render(<Show show={null} />)
+
+    const loadingMessage = screen.getByTestId('loading-container');
+    expect(loadingMessage).toBeInTheDocument();
 });
 
 test('renders same number of options seasons are passed in', ()=>{
+    render(<Show show={testShow} selectedSeason='none'/>);
+
+    const options = screen.getAllByTestId('season-option');
+    expect(options).toHaveLength(3);
 });
 
 test('handleSelect is called when an season is selected', () => {
+    const mockFunc = jest.fn();
+
+    const { getByTestId } = render(<Show show={testShow} selectedSeason='none' handleSelect={mockFunc} />);
+
+    userEvent.selectOptions(getByTestId('select'), '1');
+    expect(mockFunc).toBeCalledTimes(1);
+    expect(mockFunc.mock.calls.length).toBe(1);
+    expect(mockFunc.mock.calls).toHaveLength(1);
 });
 
 test('component renders when no seasons are selected and when rerenders with a season passed in', () => {
+    render(<Show show={testShow} selectedSeason='none' />);
+
+    const episodeContainer = document.querySelector('.episode');
+    expect(episodeContainer).not.toBeInTheDocument();
 });
 
 //Tasks:
